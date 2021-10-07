@@ -1,6 +1,8 @@
-const axios = require('axios');
-const fs = require('fs');
-require('dotenv').config();
+import axios from 'axios';
+import { getDatabase, setDatabase } from './database.js';
+import { validate } from 'multicoin-address-validator';
+import dotenv from 'dotenv';
+dotenv.config();
 
 
 async function getCMC(currency = "USD") {
@@ -15,7 +17,7 @@ async function getCMC(currency = "USD") {
     }
     let garlicoinINFO;
     let error = "no";
-    let cmcJSON = JSON.parse(fs.readFileSync('./data/cmc.json', 'utf-8'));
+    let cmcJSON = await getDatabase('cmc');
     let currentTime = Math.floor(Date.now() / 1000);
     const requestOptions = {
         method: 'GET',
@@ -23,19 +25,21 @@ async function getCMC(currency = "USD") {
         headers: { 'X-CMC_PRO_API_KEY': process.env.TOKENCMC },
         json: true, gzip: true
     };
-    let timeCurrency = currency;
-    if (cmcJSON.times == undefined) { cmcJSON.times = {} };
-    if (cmcJSON.values == undefined) { cmcJSON.values = {} };
-    if (currentTime - cmcJSON.times[timeCurrency] >= 200 || cmcJSON.times[timeCurrency] == undefined) { // 3-4 mins
+    let currentCurrency = currency;
+    if (cmcJSON.times == undefined) cmcJSON.times = {};
+    if (cmcJSON.values == undefined) cmcJSON.values = {};
+    if (currentTime - cmcJSON.times[currentCurrency] >= 200 || cmcJSON.times[currentCurrency] == undefined) { // 3-4 mins
         await axios(requestOptions).then(response => {
             garlicoinINFO = response.data.data.GRLC.quote[currencyAPI];
-            garlicoinINFO.times = cmcJSON.times;
-            garlicoinINFO.times[timeCurrency] = currentTime;
-            garlicoinINFO.values = cmcJSON.values;
-            garlicoinINFO.values[timeCurrency] = { "price": garlicoinINFO.price, "volume_24h": garlicoinINFO.volume_24h, "market_cap": garlicoinINFO.market_cap, "currency": currency };
-            garlicoinINFO.currency = currency;
-            garlicoinINFO.lastUpdate = "Right Now";
-            fs.writeFileSync('./data/cmc.json', JSON.stringify(garlicoinINFO));
+            cmcJSON.values[currentCurrency] = {
+                "price": garlicoinINFO.price,
+                "volume_24h": garlicoinINFO.volume_24h,
+                "market_cap": garlicoinINFO.market_cap,
+                "currency": currentCurrency,
+                "lastUpdate": "Right Now"
+            };
+            cmcJSON.times[currentCurrency] = currentTime;
+            setDatabase('cmc', cmcJSON);
         }).catch((err) => {
             console.log('API call error:', err.message);
             error = "yes";
@@ -43,34 +47,36 @@ async function getCMC(currency = "USD") {
         if (error == "yes") {
             return "error ocurred";
         } else {
-            return garlicoinINFO;
+            return cmcJSON.values[currentCurrency];
         }
     } else {
-        cmcJSON.lastUpdate = (currentTime - cmcJSON.times[timeCurrency]).toString() + " seconds ago";
-        cmcJSON.price = cmcJSON.values[timeCurrency].price;
-        cmcJSON.volume_24h = cmcJSON.values[timeCurrency].volume_24h;
-        cmcJSON.market_cap = cmcJSON.values[timeCurrency].market_cap;
-        cmcJSON.currency = cmcJSON.values[timeCurrency].currency;
-        return cmcJSON;
+        const savedCMC = {
+            "price": cmcJSON.values[currentCurrency].price,
+            "volume_24h": cmcJSON.values[currentCurrency].volume_24h,
+            "market_cap": cmcJSON.values[currentCurrency].market_cap,
+            "currency": cmcJSON.values[currentCurrency].currency,
+            "lastUpdate": (currentTime - cmcJSON.times[currentCurrency]).toString() + " seconds ago"
+        }
+        return savedCMC;
     }
 }
 
 
-function saveUser(discordUserID, message, prefix) {
+async function saveUser(discordUserID, message, prefix) {
     message = message.split(' ');
     if (message.length != 2) {
         return "Wrong address format. Use `" + prefix + "register <wallet_address>`. Address should start with G, M, W or grlc";
     }
     let wallet = message[1];
     if (wallet.toLowerCase() == "forget") {
-        let userWallets = JSON.parse(fs.readFileSync('./data/userWallets.json', 'utf-8'));
+        let userWallets = await getDatabase('userWallets');
         delete userWallets[discordUserID];
-        fs.writeFileSync('./data/userWallets.json', JSON.stringify(userWallets));
+        await setDatabase('userWallets', userWallets);
         return "Wallet deleted";
-    } else if ((wallet.length == 34 || wallet.length == 44) && (wallet.startsWith("G") || wallet.startsWith("M") || wallet.startsWith("grlc") || wallet.startsWith("W"))) {
-        let userWallets = JSON.parse(fs.readFileSync('./data/userWallets.json', 'utf-8'));
+    } else if (validate(wallet, 'grlc', 'both')) {
+        let userWallets = await getDatabase('userWallets');
         userWallets[discordUserID] = wallet;
-        fs.writeFileSync('./data/userWallets.json', JSON.stringify(userWallets));
+        await setDatabase('userWallets', userWallets);
         return "Your wallet has been registered: \n`" + wallet + "`";
     } else {
         return "Wrong address format. \n Use `" + prefix + "register <wallet_address>`. \n Address should start with G, M, W or grlc.";
@@ -78,27 +84,39 @@ function saveUser(discordUserID, message, prefix) {
 }
 
 
-async function getBalance(address) {
-    let error = "no";
+async function getBalanceGRLC(address) {
+    let error;
     let bal = await axios.get("https://api.freshgrlc.net/blockchain/grlc/address/" + address + "/balance").catch((err) => {
         console.log('API call error:', err.message);
-        error = "yes";
+        error = true;
     });
-    if (error == "yes") {
-        return "error";
+    if (error) {
+        return { error: true, data: "An error has occured. Might be `api.freshgrlc.net`'s fault. (You selected GRLC address, not tGRLC)" };
     }
-    return bal.data;
+    return { data: bal.data };
+}
+
+
+async function getBalancetGRLC(address) {
+    let error;
+    let bal = await axios.get("https://api.freshgrlc.net/blockchain/tgrlc/address/" + address + "/balance").catch((err) => {
+        error = true;
+    });
+    if (error) {
+        return { error: true, data: "An error has occured. Might be `api.freshgrlc.net`'s fault. (You selected tGRLC address, not GRLC)" };
+    }
+    return { data: bal.data };
 }
 
 
 async function sendBalance(discordUserID, message, prefix) {
-    let userWallets = JSON.parse(fs.readFileSync('./data/userWallets.json', 'utf-8'));
+    let userWallets = await getDatabase('userWallets');
     let address = userWallets[discordUserID];
     let cmc;
     if (address != undefined) {
-        let balance = await getBalance(address);
-        if (balance == "error") {
-            return "Error with freshgarlicblocks.net/api. Re-register your address.  Use `" + prefix + "register <wallet_address>`";
+        let balance = await getBalanceGRLC(address);
+        if (balance.error) {
+            return "Error with freshgarlicblocks.net/api. Try re-registering your address.  Use `" + prefix + "register <wallet_address>`";
         }
         if (message.split(" ").length > 1) {
             cmc = await getCMC(message.split(" ")[1]);
@@ -108,7 +126,7 @@ async function sendBalance(discordUserID, message, prefix) {
         if (cmc == "error ocurred") {
             return "error";
         } else {
-            return { "address": address, "balance": balance, "value": (balance * cmc.price), "currency": cmc.currency, "price": cmc.price, "lastUpdate": cmc.lastUpdate };
+            return { "address": address, "balance": balance.data, "value": (balance.data * cmc.price), "currency": cmc.currency, "price": cmc.price, "lastUpdate": cmc.lastUpdate };
         }
     } else {
         return "no_registration";
@@ -125,7 +143,7 @@ async function sendInfo(discordUserID, prefix) {
     let totalHash = diff * 2 ** 32 / 40 / 1e9;
     let reward = lastBlock.data[0].miningreward;
     let info;
-    let userWallets = JSON.parse(fs.readFileSync('./data/userWallets.json', 'utf-8'));
+    let userWallets = await getDatabase('userWallets');
     let address = userWallets[discordUserID];
     let error = "no";
     if (address != undefined) { // registered user
@@ -134,7 +152,7 @@ async function sendInfo(discordUserID, prefix) {
             error = "yes";
         });
         if (error == "yes") {
-            info = { "type": "error", "error": "Error with freshgarlicblocks.net/api. Re-register your address.  Use `" + prefix + "register <wallet_address>`", "poolAvgHash": poolAvgHash, "totalHash": totalHash, "workers": workers, "diff": diff, "reward": reward };
+            info = { "type": "error", "error": "Error with freshgarlicblocks.net/api. Try re-registering your address.  Use `" + prefix + "register <wallet_address>`", "poolAvgHash": poolAvgHash, "totalHash": totalHash, "workers": workers, "diff": diff, "reward": reward };
             return info; // Wouldn't work inside the .catch
         }
         let payout_address = userInfo.data.nextpayout.address;
@@ -153,17 +171,10 @@ async function sendInfo(discordUserID, prefix) {
             return info;
         }
     } else {
-        info = { "type": "no_wallet", "error": "Want your stats?\nRegister your address using `" + prefix + "register <wallet_address>`", "poolAvgHash": poolAvgHash, "totalHash": totalHash, "workers": workers, "diff": diff, "reward": reward };
+        info = { "type": "no_wallet", "error": "Want your stats?\nRegister your address using: " + prefix + "register <wallet_address>", "poolAvgHash": poolAvgHash, "totalHash": totalHash, "workers": workers, "diff": diff, "reward": reward };
         return info;
     }
 }
 
 
-// console.log(saveUser(1234_Discord_ID, "!register GaaaaaaaaaaaaaaaaaaaaaaaaaaaRANDOM"));
-// sendInfo(1234_Discord_ID);
-// async function aaa(){console.log(await getCMC("EUR"))}; aaa();
-// async function aaa(){console.log(await getBalance("GaaaaaaaaaaaaaaaaaaaaaaaaaaaRANDOM"))}; aaa();
-// sendBalance(1234_Discord_ID);
-
-
-module.exports = { saveUser, sendInfo, getCMC, sendBalance };
+export { saveUser, sendInfo, getCMC, sendBalance, getBalancetGRLC, getBalanceGRLC };

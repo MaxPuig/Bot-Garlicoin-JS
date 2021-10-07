@@ -1,16 +1,21 @@
 {
   "name": "bot-garlicoin",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Discord bot that sends info about garlicoin and user's wallets",
   "main": "bot.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "MaxPuig",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.21.1",
-    "discord.js": "^12.5.3",
-    "dotenv": "^8.2.0"
+    "axios": "^0.22.0",
+    "discord.js": "^13.2.0",
+    "dotenv": "^10.0.0",
+    "garlicoind-rpc": "^0.8.0",
+    "garlicore-lib": "^0.1.4",
+    "lowdb": "^3.0.0",
+    "multicoin-address-validator": "^0.5.2"
   }
 }
