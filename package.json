@@ -1,0 +1,16 @@
+{
+  "name": "bot-garlicoin",
+  "version": "1.0.0",
+  "description": "Discord bot that sends info about garlicoin and user's wallets",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "MaxPuig",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "discord.js": "^12.5.3",
+    "dotenv": "^8.2.0"
+  }
+}
