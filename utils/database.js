@@ -6,7 +6,7 @@ await db.read();
 if (db.data === null) { // If the database doesn't exist, create it.
     db.data = {
         'cmc': {},
-        'customPrefix': [],
+        'customPrefix': {},
         'userWallets': {},
     }
     await db.write();

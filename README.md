@@ -1,4 +1,4 @@
-# Bot-Galicoin-JS
+# Bot-Garlicoin-JS
 Discord bot that sends info about garlicoin and user's wallets.
 Make transactions on the GRLC testnet using slash commands.
 

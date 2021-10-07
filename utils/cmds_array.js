@@ -33,7 +33,7 @@ const wallet = {
         }]
     }, {
         name: 'my_address',
-        description: 'Get the address corresponding to your password',
+        description: 'Get the address corresponding to your password.',
         type: 'SUB_COMMAND',
         options: [{
             name: 'grlc_or_tgrlc',
