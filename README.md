@@ -8,7 +8,7 @@ Make transactions on the GRLC testnet using slash commands.
 - `!register {Address}` --> Saves user address to userWallets.json (!register forget --> to remove the address from the file)
 - `!info` --> Info about pool / (pool+user if registered)
 - `!balance` --> Balance of registered wallet. Also accepts !balance {other currency} --> !balance eur
-- `/wallet` --> Send tGRLC (testnet) using slash commands.More info `/wallet help`
+- `/wallet` --> Send tGRLC (testnet) using slash commands. More info `/wallet help`
 
 # SETUP
 - install node.js >= 16.6.0
@@ -32,10 +32,21 @@ Make transactions on the GRLC testnet using slash commands.
   # CoinMarketCap Token
   TOKENCMC = 'CoinMarketCapToken'
   
-  # RPC config
-  USER = 'user'
+  # RPC config. Should match garlicoin.conf
+  USERNAME = 'user'
   PASSWORD = 'password'
   HOST_IP = '127.0.0.1'
   PORT = '42068
   ```
+  `Garlicoin.conf` (used by garlicoin core):
+  ```
+  server=1
+  # Uncomment to use testnet
+  # testnet=1
+  rpcuser=user
+  rpcpassword=password
+  addnode=freshgrlc.net
+  rpcport=42068
+  ```
+
 -  Run bot `node index.js`

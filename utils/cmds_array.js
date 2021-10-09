@@ -6,6 +6,15 @@ const wallet = {
         description: 'Send tGRLC to someone.',
         type: 'SUB_COMMAND',
         options: [{
+            name: 'tgrlc',
+            description: 'This will be using the testnet (tGRLC)',
+            type: 'STRING',
+            required: true,
+            choices: [{
+                name: 'tgrlc',
+                value: 'tgrlc'
+            }]
+        }, {
             name: 'password',
             description: 'Password you used to create the wallet.',
             type: 'STRING',

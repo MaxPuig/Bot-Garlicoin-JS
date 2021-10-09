@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { validate } from 'multicoin-address-validator';
 garlicore.Networks.defaultNetwork = garlicore.Networks.testnet;
-const config = { protocol: 'http', user: process.env.USER, pass: process.env.PASSWORD, host: process.env.HOST_IP, port: process.env.PORT, };
+const config = { protocol: 'http', user: process.env.USERNAME, pass: process.env.PASSWORD, host: process.env.HOST_IP, port: process.env.PORT, };
 let rpc = new RpcClient(config);
 import util from 'util';
 
@@ -18,8 +18,8 @@ async function send_tx(password, reciever, amount, op_return, change_address) {
         amount_to_send_grlc: amount,
         op_return: op_return,
     }
-    if (!validate(reciever, 'grlc', 'both')) return 'Invalid receiver address';
-    if (change_address && !validate(change_address, 'grlc', 'both')) return 'Invalid change address';
+    if (!validate(reciever, 'grlc', 'testnet')) return 'Invalid receiver address. Must be a tGRLC address.';
+    if (change_address && !validate(change_address, 'grlc', 'testnet')) return 'Invalid change address.';
     const transaction = await getRawTransaction(tx);
     let output = { total_before: transaction.total };
     if (transaction.error) return transaction.error;
@@ -60,7 +60,7 @@ async function getRawTransaction({ password, receiver_address, change_address, a
     const amount_to_send_sats = amount_to_send_grlc * 100_000_000;
     const utxo = await get_utxos(privateKey.toAddress());
     if (!change_address) change_address = privateKey.toAddress();
-    if (utxo[0].length === 0) return { error: 'No utxo found' };
+    if (utxo[0].length === 0) return { error: 'No utxo found.' };
     const tx_amount_grlc = utxo[1];
     if (tx_amount_grlc < amount_to_send_grlc) return { error: 'Insufficient funds.' };
     let transaction = new garlicore.Transaction()

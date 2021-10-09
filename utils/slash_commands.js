@@ -8,8 +8,6 @@ import garlicore from 'garlicore-lib';
 async function slash_commands(interaction) {
     if (interaction.commandName == 'wallet') {
         if (interaction.options._subcommand == 'send') {
-            interaction.reply({ content: 'This command is not ready yet.', ephemeral: true });
-            return;
             const password = interaction.options.getString('password');
             const reciever = interaction.options.getString('reciever');
             const amount = interaction.options.getNumber('amount');
