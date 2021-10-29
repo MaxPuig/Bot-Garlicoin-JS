@@ -11,6 +11,7 @@ import util from 'util';
 
 
 async function send_tx(password, reciever, amount, op_return, change_address) {
+    if (!Number(amount)) return 'Invalid amount. Use a dot for decimal places.'; else amount = Number(amount);
     const tx = {
         password: password,
         receiver_address: reciever,
@@ -20,6 +21,7 @@ async function send_tx(password, reciever, amount, op_return, change_address) {
     }
     if (!validate(reciever, 'grlc', 'testnet')) return 'Invalid receiver address. Must be a tGRLC address.';
     if (change_address && !validate(change_address, 'grlc', 'testnet')) return 'Invalid change address.';
+    if (amount <= 0) return 'Amount must be greater than 0';
     const transaction = await getRawTransaction(tx);
     let output = { total_before: transaction.total };
     if (transaction.error) return transaction.error;

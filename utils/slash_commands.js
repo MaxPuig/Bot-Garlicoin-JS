@@ -10,7 +10,7 @@ async function slash_commands(interaction) {
         if (interaction.options._subcommand == 'send') {
             const password = interaction.options.getString('password');
             const reciever = interaction.options.getString('reciever');
-            const amount = interaction.options.getNumber('amount');
+            const amount = interaction.options.getString('amount');
             const op_return = interaction.options.getString('op_return'); // undefined (Handled)
             const change_address = interaction.options.getString('change_address'); // undefined
             let result = await send_tx(password, reciever, amount, op_return, change_address);

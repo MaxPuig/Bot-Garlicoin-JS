@@ -26,8 +26,8 @@ const wallet = {
             required: true
         }, {
             name: 'amount',
-            description: 'How much you want to send.',
-            type: 'NUMBER',
+            description: 'How much you want to send. **Dot** for decimal place.',
+            type: 'STRING',
             required: true
         }, {
             name: 'op_return',
@@ -36,7 +36,7 @@ const wallet = {
             required: false
         }, {
             name: 'change_address',
-            description: '(Optional) Where the rest of the coins will go. (blank = sender)',
+            description: '(Optional) Where the rest of the coins will go. (Blank = Sender)',
             type: 'STRING',
             required: false
         }]
