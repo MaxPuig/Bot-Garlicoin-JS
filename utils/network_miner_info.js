@@ -9,7 +9,7 @@ async function network_miner_info(msg, prefix) {
             .setColor('#E67E22')
             .setTitle('FreshGarlicBlocks Info')
             .setURL('https://www.freshgarlicblocks.net/')
-            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
             .addFields(
                 { name: "FreshG's Pool", value: info.poolAvgHash.toLocaleString(number_format, { minimumFractionDigits: 4 }) + " GH/s" },
                 { name: 'Network', value: info.totalHash.toLocaleString(number_format, { minimumFractionDigits: 4 }) + " GH/s" },
@@ -24,7 +24,7 @@ async function network_miner_info(msg, prefix) {
             .setColor('#E67E22')
             .setTitle('FreshGarlicBlocks Info')
             .setURL('https://www.freshgarlicblocks.net/')
-            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
             .addFields(
                 { name: 'Payout Address', value: info.payout_address },
                 { name: 'Payout Type', value: info.payout_type },
@@ -42,7 +42,7 @@ async function network_miner_info(msg, prefix) {
             .setColor('#E67E22')
             .setTitle('FreshGarlicBlocks Info')
             .setURL('https://www.freshgarlicblocks.net/')
-            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
             .addFields(
                 { name: 'Payout Address', value: info.payout_address },
                 { name: 'Payout Type', value: info.payout_type },
@@ -61,7 +61,7 @@ async function network_miner_info(msg, prefix) {
             .setColor('#E67E22')
             .setTitle('FreshGarlicBlocks Info')
             .setURL('https://www.freshgarlicblocks.net/')
-            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
             .addFields(
                 { name: "FreshG's Pool", value: info.poolAvgHash.toLocaleString(number_format, { minimumFractionDigits: 4 }) + " GH/s" },
                 { name: 'Network', value: info.totalHash.toLocaleString(number_format, { minimumFractionDigits: 4 }) + " GH/s" },

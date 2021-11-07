@@ -7,7 +7,7 @@ async function register(msg, prefix) {
     let embed = new MessageEmbed()
         .setColor('#E67E22')
         .setTitle('Wallet registration')
-        .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+        .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
         .setDescription(answer)
     msg.channel.send({ embeds: [embed] });
 }
