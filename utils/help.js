@@ -5,7 +5,7 @@ function help(msg, prefix) {
     let embed = new MessageEmbed()
         .setColor('#E67E22')
         .setTitle('Garlicoin Bot Commands')
-        .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+        .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
         .addFields(
             { name: prefix + 'price', value: "Current Garlicoin Value in USD.\nAlso accepts `" + prefix + "price <optional:custom_currency_code>`\nExample: `" + prefix + "price eur`\nCurrency codes: [Fiat Codes.](https://imgur.com/a/O3avEXm) `EUR, USD, HKD, ...`\nAlso accepts codes like `BTC, ETH, DOGE, SATS, ...`" },
             { name: prefix + 'register <Address>', value: "Address must start with `G, M, W or grlc` and be 34/44 characters long.\nExample: `" + prefix + "register GaaaaaaaaaaaaaaGarlicRandomAddress`\nSave your wallet to use `" + prefix + "balance` and `" + prefix + "info`\n`" + prefix + "register forget` to forget your wallet" },

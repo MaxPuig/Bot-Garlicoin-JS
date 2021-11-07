@@ -26,7 +26,7 @@ async function price(msg) {
             .setColor('#E67E22')
             .setTitle('CoinMarketCap Garlicoin Info')
             .setURL('https://coinmarketcap.com/currencies/garlicoin/')
-            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
             .addFields(
                 { name: 'Price', value: value1 },
                 { name: 'Volume 24h', value: value2 },

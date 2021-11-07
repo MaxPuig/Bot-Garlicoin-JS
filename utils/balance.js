@@ -8,21 +8,21 @@ async function balance(msg, prefix) {
         let embed = new MessageEmbed()
             .setColor('#E67E22')
             .setTitle('Balance')
-            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
             .setDescription("No wallet registered. Use `" + prefix + "register <wallet_address>`")
         msg.channel.send({ embeds: [embed] });
     } else if (answer == "error") {
         let embed = new MessageEmbed()
             .setColor('#E67E22')
             .setTitle('Balance')
-            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
             .setDescription("Something went wrong with CoinMarketCap")
         msg.channel.send({ embeds: [embed] });
     } else if (answer.address == undefined) {
         let embed = new MessageEmbed()
             .setColor('#E67E22')
             .setTitle('Balance')
-            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
             .setDescription("Something went wrong. Try to re-register your address.  Use `" + prefix + "register <wallet_address>`")
         msg.channel.send({ embeds: [embed] });
     } else {
@@ -38,7 +38,7 @@ async function balance(msg, prefix) {
         let embed = new MessageEmbed()
             .setColor('#E67E22')
             .setTitle('Balance')
-            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/64x64/2475.png')
+            .setThumbnail('https://s2.coinmarketcap.com/static/img/coins/200x200/2475.png')
             .addFields(
                 { name: 'Address', value: answer.address },
                 { name: 'Balance', value: answer.balance.toLocaleString(number_format, { minimumFractionDigits: 4 }) + " 🧄" },
