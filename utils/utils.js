@@ -31,13 +31,9 @@ async function getCMC(currency = "USD") {
     if (currentTime - cmcJSON.times[currentCurrency] >= 200 || cmcJSON.times[currentCurrency] == undefined) { // 3-4 mins
         await axios(requestOptions).then(response => {
             garlicoinINFO = response.data.data.GRLC.quote[currencyAPI];
-            cmcJSON.values[currentCurrency] = {
-                "price": garlicoinINFO.price,
-                "volume_24h": garlicoinINFO.volume_24h,
-                "market_cap": garlicoinINFO.market_cap,
-                "currency": currentCurrency,
-                "lastUpdate": "Right Now"
-            };
+            garlicoinINFO["lastUpdate"] = "Right Now"
+            garlicoinINFO["currency"] = currentCurrency
+            cmcJSON.values[currentCurrency] = garlicoinINFO
             cmcJSON.times[currentCurrency] = currentTime;
             setDatabase('cmc', cmcJSON);
         }).catch((err) => {
@@ -50,13 +46,8 @@ async function getCMC(currency = "USD") {
             return cmcJSON.values[currentCurrency];
         }
     } else {
-        const savedCMC = {
-            "price": cmcJSON.values[currentCurrency].price,
-            "volume_24h": cmcJSON.values[currentCurrency].volume_24h,
-            "market_cap": cmcJSON.values[currentCurrency].market_cap,
-            "currency": cmcJSON.values[currentCurrency].currency,
-            "lastUpdate": (currentTime - cmcJSON.times[currentCurrency]).toString() + " seconds ago"
-        }
+        const savedCMC = cmcJSON.values[currentCurrency];
+        savedCMC.lastUpdate = (currentTime - cmcJSON.times[currentCurrency]).toString() + " seconds ago"
         return savedCMC;
     }
 }
