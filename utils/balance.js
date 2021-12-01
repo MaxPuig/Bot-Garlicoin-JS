@@ -2,8 +2,9 @@ import { sendBalance } from './utils.js';
 import { MessageEmbed } from 'discord.js';
 const number_format = "en-US";
 
+
 async function balance(msg, prefix) {
-    let answer = await sendBalance(msg.author.id, msg.content, prefix);
+    let answer = await sendBalance(msg.author.id, msg.content, 'grlc', prefix);
     if (answer == "no_registration") {
         let embed = new MessageEmbed()
             .setColor('#E67E22')

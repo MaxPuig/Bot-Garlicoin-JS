@@ -1,8 +1,12 @@
-import axios from 'axios';
-import { getDatabase, setDatabase } from './database.js';
-import { validate } from 'multicoin-address-validator';
 import dotenv from 'dotenv';
 dotenv.config();
+import util from 'util';
+import axios from 'axios';
+import RpcClient from 'garlicoind-rpc';
+import { getDatabase, setDatabase } from './database.js';
+const config = { protocol: 'http', user: process.env.RPC_USER, pass: process.env.RPC_PASSWORD, host: process.env.RPC_HOST_IP, port: process.env.RPC_PORT, };
+let rpc = new RpcClient(config);
+const validateaddress_pre_function = util.promisify(rpc.validateaddress).bind(rpc);
 
 
 async function getCMC(currency = "USD") {
@@ -53,6 +57,15 @@ async function getCMC(currency = "USD") {
 }
 
 
+/** returns {isValid: true/false, error: error/undefined} */
+async function validateAddress(address) {
+    let valid_address;
+    await validateaddress_pre_function(address).then(success => valid_address = { isValid: success.result.isvalid })
+        .catch(err => valid_address = { error: err, isValid: false });
+    return valid_address;
+}
+
+
 async function saveUser(discordUserID, message, prefix) {
     message = message.split(' ');
     if (message.length != 2) {
@@ -64,48 +77,51 @@ async function saveUser(discordUserID, message, prefix) {
         delete userWallets[discordUserID];
         await setDatabase('userWallets', userWallets);
         return "Wallet deleted";
-    } else if (validate(wallet, 'grlc', 'both')) {
+    } else if (validateAddress(wallet).isValid) {
         let userWallets = await getDatabase('userWallets');
         userWallets[discordUserID] = wallet;
         await setDatabase('userWallets', userWallets);
         return "Your wallet has been registered: \n`" + wallet + "`";
+    } else if (validateAddress(wallet).error) {
+        return "Something went wrong with the RPC connection. (Bot's fault)";
     } else {
         return "Wrong address format. \n Use `" + prefix + "register <wallet_address>`. \n Address should start with G, M, W or grlc.";
     }
 }
 
 
-async function getBalanceGRLC(address) {
+async function getBalance(address, grlc_or_tgrlc) {
     let error;
-    let bal = await axios.get("https://api.freshgrlc.net/blockchain/grlc/address/" + address + "/balance").catch((err) => {
+    let bal = await axios.get(`https://api.freshgrlc.net/blockchain/${grlc_or_tgrlc.toLowerCase()}/address/${address}/balance`).catch((err) => {
         console.log('API call error:', err.message);
         error = true;
     });
     if (error) {
-        return { error: true, data: "An error has occured. Might be `api.freshgrlc.net`'s fault. (You selected GRLC address, not tGRLC)" };
+        return { error: true, data: "An error has occured. Might be `api.freshgrlc.net`'s fault. (" + grlc_or_tgrlc + " Address balance was looked up)" };
     }
     return { data: bal.data };
 }
 
 
-async function getBalancetGRLC(address) {
+async function getPending(address, grlc_or_tgrlc) {
     let error;
-    let bal = await axios.get("https://api.freshgrlc.net/blockchain/tgrlc/address/" + address + "/balance").catch((err) => {
+    let bal = await axios.get(`https://api.freshgrlc.net/blockchain/${grlc_or_tgrlc.toLowerCase()}/address/${address}/pending`).catch((err) => {
+        console.log('API call error:', err.message);
         error = true;
     });
     if (error) {
-        return { error: true, data: "An error has occured. Might be `api.freshgrlc.net`'s fault. (You selected tGRLC address, not GRLC)" };
+        return { error: true, data: "An error has occured. Might be `api.freshgrlc.net`'s fault. (" + grlc_or_tgrlc + " Address pending balance was looked up)" };
     }
     return { data: bal.data };
 }
 
 
-async function sendBalance(discordUserID, message, prefix) {
+async function sendBalance(discordUserID, message, grlc_or_tgrlc, prefix) {
     let userWallets = await getDatabase('userWallets');
     let address = userWallets[discordUserID];
     let cmc;
     if (address != undefined) {
-        let balance = await getBalanceGRLC(address);
+        let balance = await getBalance(address, grlc_or_tgrlc);
         if (balance.error) {
             return "Error with freshgarlicblocks.net/api. Try re-registering your address.  Use `" + prefix + "register <wallet_address>`";
         }
@@ -168,4 +184,4 @@ async function sendInfo(discordUserID, prefix) {
 }
 
 
-export { saveUser, sendInfo, getCMC, sendBalance, getBalancetGRLC, getBalanceGRLC };
+export { saveUser, sendInfo, getCMC, sendBalance, getBalance, getPending, validateAddress };

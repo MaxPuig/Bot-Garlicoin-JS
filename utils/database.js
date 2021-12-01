@@ -8,6 +8,8 @@ if (db.data === null) { // If the database doesn't exist, create it.
         'cmc': {},
         'customPrefix': {},
         'userWallets': {},
+        'send_addresses': {},
+        'lottery': { total_lotteries: 0, win_address: {} }
     }
     await db.write();
 }
