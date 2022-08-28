@@ -52,7 +52,6 @@ function showNewTransactions(client) {
                 })
             });
             txids = ret.result;
-            setTimeout(showNewTransactions, 2500);
         });
     });
 }
