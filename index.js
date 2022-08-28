@@ -17,7 +17,7 @@ let prefixes = await getDatabase('customPrefix');
 
 client.on('ready', async function () {
     console.log("Bot started!");
-    client.user.setActivity('price', { type: 'WATCHING' });
+    await client.user.setActivity('price', { type: 'WATCHING' });
     showNewTransactions(client);
     // await client.guilds.cache.get('123456789')?.commands.set([]);
     // await client.guilds.cache.get('123456789')?.commands.set(all_commands_array);
