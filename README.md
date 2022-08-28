@@ -34,8 +34,8 @@ Make transactions on the GRLC testnet using slash commands.
   TOKENCMC = 'CoinMarketCapToken'
   
   # RPC config. Should match garlicoin.conf
-  USERNAME = 'user'
-  PASSWORD = 'password'
+  RPC_USER = 'user'
+  RPC_PASSWORD = 'password'
   HOST_IP = '127.0.0.1'
   PORT = '42068
   ```
@@ -48,7 +48,7 @@ Make transactions on the GRLC testnet using slash commands.
   # Uncomment to get the op_return notifications working
   # This will significantly increase the size of garlicoin core
   # txindex=1
-  
+
   rpcuser=user
   rpcpassword=password
   addnode=freshgrlc.net
