@@ -8,6 +8,7 @@ Make transactions on the GRLC testnet using slash commands.
 - `!register {Address}` --> Saves user address to userWallets.json (!register forget --> to remove the address from the file)
 - `!info` --> Info about pool / (pool+user if registered)
 - `!balance` --> Balance of registered wallet. Also accepts !balance {other currency} --> !balance eur
+- `!op_return` --> Get notified when OP_RETURN transactions occur.
 - `/wallet` --> Send tGRLC (testnet) using slash commands. More info `/wallet help`
 
 # SETUP
@@ -43,6 +44,11 @@ Make transactions on the GRLC testnet using slash commands.
   server=1
   # Uncomment to use testnet
   # testnet=1
+
+  # Uncomment to get the op_return notifications working
+  # This will significantly increase the size of garlicoin core
+  # txindex=1
+  
   rpcuser=user
   rpcpassword=password
   addnode=freshgrlc.net

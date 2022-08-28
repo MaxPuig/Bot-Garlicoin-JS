@@ -11,7 +11,7 @@ function help(msg, prefix) {
             { name: prefix + 'register <Address>', value: "Address must start with `G, M, W or grlc` and be 34/44 characters long.\nExample: `" + prefix + "register GaaaaaaaaaaaaaaGarlicRandomAddress`\nSave your wallet to use `" + prefix + "balance` and `" + prefix + "info`\n`" + prefix + "register forget` to forget your wallet" },
             { name: prefix + 'info', value: "Info about pool / (pool + user if registered).\nInfo of miner only if you are mining in FreshGarlicBlocks' Pool" },
             { name: prefix + 'balance or ' + prefix + 'bal', value: "Balance of your registered wallet.\nAlso accepts `" + prefix + "balance <optional:custom_currency>`.\nExample: `" + prefix + "balance eur`" },
-            { name: 'BETA: `/wallet`', value: "Send tGRLC (testnet) using slash commands.\nMore info `/wallet help`" },
+            { name: 'DISABLED: `/wallet`', value: "Send tGRLC (testnet) using slash commands.\nMore info `/wallet help`" },
             { name: 'Want this bot in your server?', value: "[Add the bot](https://discord.com/api/oauth2/authorize?client_id=835398074057883708&permissions=35840&scope=bot%20applications.commands) to your server!" },
         )
     msg.channel.send({ embeds: [embed] });

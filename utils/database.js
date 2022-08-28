@@ -8,7 +8,13 @@ if (db.data === null) { // If the database doesn't exist, create it.
         'cmc': {},
         'customPrefix': {},
         'userWallets': {},
+        'op_return_channels': [],
     }
+    await db.write();
+}
+
+if (!db.data.op_return_channels) {
+    db.data.op_return_channels = [];
     await db.write();
 }
 
