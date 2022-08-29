@@ -29,7 +29,7 @@ client.on('ready', async function () {
 client.on('messageCreate', async function (msg) {
     if (msg.webhookID != null || msg.author.bot) return;
     let prefix;
-    if (msg.channel.type === 'GUILD_TEXT') { // Server
+    if (msg.channel.type === 'GUILD_TEXT' || msg.channel.type == 'GUILD_PUBLIC_THREAD') {
         prefix = "!";
         if (prefixes[msg.guild.id] != undefined) prefix = prefixes[msg.guild.id]; // sets the custom prefix
         if (msg.content.toLowerCase().startsWith(prefix + "price")) {
