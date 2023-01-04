@@ -17,7 +17,7 @@ async function network_miner_info(msg, prefix) {
                 { name: 'Difficulty', value: info.diff.toString() },
                 { name: 'Block Reward', value: info.reward + " 🧄" }
             )
-            .setFooter(info.error);
+            .setFooter({ text: info.error });
         msg.channel.send({ embeds: [embed] });
     } else if (info.type == "instant") {
         let embed = new MessageEmbed()
@@ -69,7 +69,7 @@ async function network_miner_info(msg, prefix) {
                 { name: 'Difficulty', value: info.diff.toString() },
                 { name: 'Block Reward', value: info.reward + " 🧄" }
             )
-            .setFooter(info.error);
+            .setFooter({ text: info.error });
         msg.channel.send({ embeds: [embed] });
     }
 }

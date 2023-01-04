@@ -45,7 +45,7 @@ async function balance(msg, prefix) {
                 { name: 'Total value', value: value4 },
                 { name: '1 GRLC🧄', value: value5 }
             )
-            .setFooter('Last Updated: ' + answer.lastUpdate);
+            .setFooter({ text: 'Last Updated: ' + answer.lastUpdate });
         msg.channel.send({ embeds: [embed] });
     }
 }

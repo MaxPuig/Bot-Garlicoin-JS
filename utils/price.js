@@ -31,7 +31,7 @@ async function price(msg) {
                 { name: '24hr Price Change', value: formatLossGain(hr24_change), inline: true },
                 { name: '7d Price Change', value: formatLossGain(d7_change), inline: true },
             )
-            .setFooter('Last Updated: ' + info.lastUpdate);
+            .setFooter({ text: 'Last Updated: ' + info.lastUpdate });
         msg.channel.send({ embeds: [embed] });
     }
 
@@ -42,21 +42,21 @@ async function price(msg) {
     values starting with "+" turn green
     values without either are white
  */
-function formatLossGain(value){
-    if(value>0) value = "+" + value
+function formatLossGain(value) {
+    if (value > 0) value = "+" + value
     value = value + "%"
-    return "```diff\n"+value+"\n```"
+    return "```diff\n" + value + "\n```"
 }
 
-function formatCurrency(value, currency, minimumFractionDigits){
-    try{
+function formatCurrency(value, currency, minimumFractionDigits) {
+    try {
         return value.toLocaleString(number_format, { style: 'currency', currency: currency, minimumFractionDigits: minimumFractionDigits });
-    }catch(error){
+    } catch (error) {
         return formatNumber(value, minimumFractionDigits) + " " + currency;
     }
 }
 
-function formatNumber(value, minimumFractionDigits){
+function formatNumber(value, minimumFractionDigits) {
     return value.toLocaleString(number_format, { minimumFractionDigits: minimumFractionDigits });
 }
 

@@ -53,6 +53,9 @@ Make transactions on the GRLC testnet using slash commands.
   rpcpassword=password
   addnode=freshgrlc.net
   rpcport=42068
+
+  mintxfee=0.00005
+  minrelaytxfee=0.00005
   ```
 
 -  Run bot `node index.js`
