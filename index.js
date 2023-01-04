@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { Client } from 'discord.js';
 const client = new Client({ partials: ['MESSAGE', 'CHANNEL'], intents: 4609 }); // https://ziad87.net/intents/
-// import { slash_commands } from './utils/slash_commands.js';
+import { slash_commands } from './utils/slash_commands.js';
 import { price } from './utils/price.js';
 import { register } from './utils/register.js';
 import { balance } from './utils/balance.js';
@@ -54,9 +54,8 @@ client.on('messageCreate', async function (msg) {
 
 
 client.on('interactionCreate', async interaction => {
-    return;
     if (interaction.isCommand()) { // slash command
-        // slash_commands(interaction);
+        slash_commands(interaction);
     }
 });
 

@@ -1,27 +1,18 @@
 const wallet = {
     name: 'wallet',
-    description: 'Send tGRLC',
+    description: 'Send GRLC',
     options: [{
         name: 'send',
-        description: 'Send tGRLC to someone.',
+        description: 'Send GRLC to someone.',
         type: 'SUB_COMMAND',
         options: [{
-            name: 'tgrlc',
-            description: 'This will be using the testnet (tGRLC)',
-            type: 'STRING',
-            required: true,
-            choices: [{
-                name: 'tgrlc',
-                value: 'tgrlc'
-            }]
-        }, {
             name: 'password',
             description: 'Password you used to create the wallet.',
             type: 'STRING',
             required: true,
         }, {
-            name: 'reciever',
-            description: 'Address where you want to send the tGRLC.',
+            name: 'receiver',
+            description: 'Address where you want to send the GRLC.',
             type: 'STRING',
             required: true
         }, {
@@ -45,18 +36,6 @@ const wallet = {
         description: 'Get the address corresponding to your password.',
         type: 'SUB_COMMAND',
         options: [{
-            name: 'grlc_or_tgrlc',
-            description: 'Normal addres or testnet (tGRLC)?',
-            type: 'STRING',
-            required: true,
-            choices: [{
-                name: 'tgrlc',
-                value: 'tgrlc'
-            }, {
-                name: 'grlc',
-                value: 'grlc'
-            }]
-        }, {
             name: 'password',
             description: 'Password you used to create the wallet.',
             type: 'STRING',
@@ -77,18 +56,6 @@ const wallet = {
             }, {
                 name: 'password',
                 value: 'password'
-            }]
-        }, {
-            name: 'grlc_or_tgrlc',
-            description: 'Normal addres or testnet (tGRLC)?',
-            type: 'STRING',
-            required: true,
-            choices: [{
-                name: 'tgrlc',
-                value: 'tgrlc'
-            }, {
-                name: 'grlc',
-                value: 'grlc'
             }]
         }, {
             name: 'value',

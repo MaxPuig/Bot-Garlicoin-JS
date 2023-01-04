@@ -82,19 +82,7 @@ async function getBalanceGRLC(address) {
         error = true;
     });
     if (error) {
-        return { error: true, data: "An error has occured. Might be `api.freshgrlc.net`'s fault. (You selected GRLC address, not tGRLC)" };
-    }
-    return { data: bal.data };
-}
-
-
-async function getBalancetGRLC(address) {
-    let error;
-    let bal = await axios.get("https://api.freshgrlc.net/blockchain/tgrlc/address/" + address + "/balance").catch((err) => {
-        error = true;
-    });
-    if (error) {
-        return { error: true, data: "An error has occured. Might be `api.freshgrlc.net`'s fault. (You selected tGRLC address, not GRLC)" };
+        return { error: true, data: "An error has occured. Might be `api.freshgrlc.net`'s fault." };
     }
     return { data: bal.data };
 }
@@ -168,4 +156,4 @@ async function sendInfo(discordUserID, prefix) {
 }
 
 
-export { saveUser, sendInfo, getCMC, sendBalance, getBalancetGRLC, getBalanceGRLC };
+export { saveUser, sendInfo, getCMC, sendBalance, getBalanceGRLC };

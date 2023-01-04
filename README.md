@@ -1,6 +1,6 @@
 # Bot-Garlicoin-JS
-Discord bot that sends info about garlicoin and user's wallets.
-Make transactions on the GRLC testnet using slash commands.
+Discord bot that sends info about garlicoin's price, user's wallets and freshgrlc.
+(Beta) Make transactions on the GRLC blockchain using slash commands.
 
 # Commands
 - `!prefix` --> Changes the prefix of commands. ("!" by default) (Only triggerable by Server Admins)
@@ -9,7 +9,7 @@ Make transactions on the GRLC testnet using slash commands.
 - `!info` --> Info about pool / (pool+user if registered)
 - `!balance` --> Balance of registered wallet. Also accepts !balance {other currency} --> !balance eur
 - `!op_return` --> Get notified when OP_RETURN transactions occur.
-- `/wallet` --> Send tGRLC (testnet) using slash commands. More info `/wallet help`
+- `/wallet` --> (Beta) Send GRLC using slash commands. More info `/wallet help`
 
 # SETUP
 - install node.js >= 16.6.0
@@ -39,11 +39,9 @@ Make transactions on the GRLC testnet using slash commands.
   HOST_IP = '127.0.0.1'
   PORT = '42068
   ```
-  `Garlicoin.conf` (used by garlicoin core):
+  `garlicoin.conf` (used by garlicoin core):
   ```
   server=1
-  # Uncomment to use testnet
-  # testnet=1
 
   # Uncomment to get the op_return notifications working
   # This will significantly increase the size of garlicoin core
