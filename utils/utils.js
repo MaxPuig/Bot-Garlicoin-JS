@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { getDatabase, setDatabase } from './database.js';
-import { validate } from 'multicoin-address-validator';
+import garlicore from 'bitcore-lib-grlc';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -64,7 +64,7 @@ async function saveUser(discordUserID, message, prefix) {
         delete userWallets[discordUserID];
         await setDatabase('userWallets', userWallets);
         return "Wallet deleted";
-    } else if (validate(wallet, 'grlc', 'both')) {
+    } else if (garlicore.Address.isValid(wallet)) {
         let userWallets = await getDatabase('userWallets');
         userWallets[discordUserID] = wallet;
         await setDatabase('userWallets', userWallets);

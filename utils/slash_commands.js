@@ -1,8 +1,7 @@
 import { send_tx } from './tGRLC.js';
 import { help_wallet } from './help.js';
 import { getBalancetGRLC, getBalanceGRLC } from './utils.js';
-import { validate } from 'multicoin-address-validator';
-import garlicore from 'garlicore-lib';
+import garlicore from 'bitcore-lib-grlc';
 
 
 async function slash_commands(interaction) {
@@ -50,7 +49,7 @@ async function slash_commands(interaction) {
                     }
                 }
             } else {
-                if (validate(value, 'grlc', 'both')) {
+                if (garlicore.Address.isValid(value)) {
                     let balance;
                     if (grlc_or_tgrlc == 'tgrlc') {
                         balance = await getBalancetGRLC(value);
