@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { getDatabase, setDatabase } from './database.js';
+import { decodeP2SHDATA } from './p2shdata.js';
 import RpcClient from 'garlicoind-rpc';
 const config = {
     protocol: 'http',
@@ -39,9 +40,10 @@ function showNewTransactions(client) {
                     resp.result.vout.forEach(function (vout) {
                         if (vout.scriptPubKey.type == 'nulldata') {
                             let hex = vout.scriptPubKey.asm.split('OP_RETURN ')[1];
+                            if (hex.length <= 10) hex = vout.scriptPubKey.hex.slice(4); // Small OP_Returns have 1 less byte
                             let ascii;
                             let txid = resp.result.txid;
-                            try { ascii = hex_to_ascii(hex) } catch { ascii = "Can't convert to ASCII" };
+                            try { ascii = hexToAscii(hex) } catch { ascii = "Can't convert to ASCII" };
                             op_returns.push([hex, ascii, txid]);
                         }
                     });
@@ -58,12 +60,19 @@ function showNewTransactions(client) {
 
 
 async function sendNotif(ops, client) {
-    let msg = '**New OP_RETURN:**\n```';
-    for (const tx of ops) msg += `HEX: ${tx[0]}\nASCII: ${tx[1]}\nTXID: ${tx[2]}\n` + '```';
+    let msg_send = { content: '**New OP_RETURN:**\n```', files: [] };
+    for (const tx of ops) msg_send.content += `HEX: ${tx[0]}\nASCII: ${tx[1]}\nTXID: ${tx[2]}\n` + '```';
+    try {
+        for (const tx of ops) {
+            if (hexToAscii(tx[0].slice(24, 44)).replace(/\x00/g, '') == '/p2shdata') { // checks if it uses the /p2shdata protocol
+                msg_send.files.push({ attachment: await decodeP2SHDATA(tx[2]) });
+            }
+        }
+    } catch (error) { console.log(error) } // In case the file can't be decoded
     const op_return_channels = await getDatabase('op_return_channels');
     for (const channel of op_return_channels) {
         try {
-            client.channels.cache.get(channel).send(msg);
+            client.channels.cache.get(channel).send(msg_send);
         } catch (error) {
             console.log(error);
         }
@@ -71,14 +80,7 @@ async function sendNotif(ops, client) {
 }
 
 
-function hex_to_ascii(str1) {
-    var hex = str1.toString();
-    var str = '';
-    for (var n = 0; n < hex.length; n += 2) {
-        str += String.fromCharCode(parseInt(hex.substr(n, 2), 16));
-    }
-    return str;
-}
+function hexToAscii(hex) { return Buffer.from(hex, 'hex').toString(); }
 
 
 async function saveOP_returnChannel(msg) {
