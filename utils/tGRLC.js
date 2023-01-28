@@ -71,6 +71,7 @@ async function getRawTransaction({ password, receiver_address, change_address, a
         transaction.sign(privateKey);
         return { tx: transaction.serialize(), warning: warning };
     } catch (error) {
+        if (op_return.length > 80) return { error: 'OP_RETURN data is too long. Max length is 80 characters. You sent: ' + op_return.length };
         return { error: 'Something went wrong. Possible causes:\n-Not enough funds or not enough funds for fees\n-Try a lower amount\nError: `' + error.message.toString() + '`' };
     }
 }
