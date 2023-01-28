@@ -3,6 +3,7 @@ dotenv.config();
 import { getDatabase, setDatabase } from './database.js';
 import { decodeP2SHDATA } from './p2shdata.js';
 import RpcClient from 'garlicoind-rpc';
+import fs from 'fs';
 const config = {
     protocol: 'http',
     user: process.env.RPC_USER,
@@ -61,21 +62,30 @@ function showNewTransactions(client) {
 
 async function sendNotif(ops, client) {
     let msg_send = { content: '**New OP_RETURN:**\n```', files: [] };
+    let p2shdata = false;
+    let p2shdata_info;
     for (const tx of ops) msg_send.content += `HEX: ${tx[0]}\nASCII: ${tx[1]}\nTXID: ${tx[2]}\n` + '```';
     try {
-        for (const tx of ops) {
-            if (hexToAscii(tx[0].slice(24, 44)).replace(/\x00/g, '') == '/p2shdata') { // checks if it uses the /p2shdata protocol
-                msg_send.files.push({ attachment: await decodeP2SHDATA(tx[2]) });
-            }
+        if (hexToAscii(ops[0][0].slice(24, 44)).replace(/\x00/g, '') == '/p2shdata') { // checks if it uses the /p2shdata protocol
+            p2shdata = true;
+            p2shdata_info = await decodeP2SHDATA(ops[0][2]);
+            msg_send.files.push({ attachment: p2shdata_info.file_location });
+            msg_send.content += '```' + JSON.stringify(p2shdata_info.title, null, 2) + '```';
         }
     } catch (error) { console.log(error) } // In case the file can't be decoded
     const op_return_channels = await getDatabase('op_return_channels');
     for (const channel of op_return_channels) {
         try {
-            client.channels.cache.get(channel).send(msg_send);
+            await client.channels.cache.get(channel).send(msg_send);
         } catch (error) {
             console.log(error);
         }
+    }
+    if (p2shdata) {
+        fs.unlink(p2shdata_info.file_location, (err) => {
+            if (err) throw err;
+            console.log('file deleted successfully');
+        });
     }
 }
 
