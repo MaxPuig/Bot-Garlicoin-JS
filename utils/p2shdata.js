@@ -1,14 +1,22 @@
-import { ElectrumClient } from '@samouraiwallet/electrum-client';
-import garlicore from 'bitcore-lib-grlc';
 import fs from 'fs';
-const client = new ElectrumClient(50002, 'services.garlicoin.ninja', 'tls');
+import RpcClient from 'garlicoind-rpc';
+import dotenv from 'dotenv';
+dotenv.config();
+const config = { protocol: 'http', user: process.env.RPC_USER, pass: process.env.RPC_PASSWORD, host: process.env.HOST_IP, port: process.env.PORT, };
+let rpc = new RpcClient(config);
+import util from 'util';
+import garlicore from 'bitcore-lib-grlc';
+
+
+const getRawTransaction = util.promisify(rpc.getRawTransaction).bind(rpc);
 
 
 /* Return location and info of file */
 async function decodeP2SHDATA(txid) {
-    connectToElectrum();
-    let rawTx = await client.blockchainTransaction_get(txid);
-    client.close();
+    let rawTx;
+    await getRawTransaction(txid)
+        .then(success => rawTx = success.result)
+        .catch(err => console.log(err));
     let tx = garlicore.Transaction(rawTx).toObject();
     let title = tx.outputs.filter((vout) => { return vout.satoshis == 0 })[0].script;
     let data_array = tx.inputs.map((vin) => { return vin.script });
@@ -81,18 +89,6 @@ function hexToAscii(hex) { return Buffer.from(hex, 'hex').toString(); }
 
 
 function hexToDecimal(hex) { return parseInt(hex, 16); }
-
-
-function connectToElectrum() {
-    try {
-        client.initElectrum(
-            { client: 'electrum-client-js', version: ['1.2', '1.4'] },
-            { retryPeriod: 5000, maxRetry: 10, pingPeriod: 5000 }
-        );
-    } catch (error) {
-        console.log(error);
-    }
-}
 
 
 export { decodeP2SHDATA };

@@ -10,7 +10,6 @@
   "author": "MaxPuig",
   "license": "ISC",
   "dependencies": {
-    "@samouraiwallet/electrum-client": "^1.3.0",
     "axios": "^1.2.2",
     "bitcore-lib-grlc": "^1.0.3",
     "discord.js": "^13.12.0",
