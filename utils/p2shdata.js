@@ -22,16 +22,7 @@ async function decodeP2SHDATA(txid) {
     let data_array = tx.inputs.map((vin) => { return vin.script });
     let data = '';
     for (let chunk of data_array) {
-        if (chunk.startsWith('4d')) { // deletes the first 6 and the last 11 bytes (OP_CODES)
-            chunk = chunk.slice(12);
-            data += chunk.slice(0, -22);
-        } else if (chunk.startsWith('4c')) { // deletes the first 4 and the last 11 bytes (OP_CODES)
-            chunk = chunk.slice(8);
-            data += chunk.slice(0, -22);
-        } else { // deletes the first 2 and the last 11 bytes (OP_CODES)
-            chunk = chunk.slice(4);
-            data += chunk.slice(0, -22);
-        }
+        data += cutScript(cutScript(chunk));
     }
     let decodedTitle = decodeTitle(title);
     fs.writeFileSync('./data/' + decodedTitle.filename + '.' + decodedTitle.filetype, Buffer.from(data, "hex"));
@@ -89,6 +80,25 @@ function hexToAscii(hex) { return Buffer.from(hex, 'hex').toString(); }
 
 
 function hexToDecimal(hex) { return parseInt(hex, 16); }
+
+
+function littleEndianToDecimal(hex) { return parseInt(hex.match(/.{2}/g).reverse().join(''), 16); }
+
+
+function cutScript(chunk) {
+    let data = '';
+    if (chunk.startsWith('4d')) { // OP_PUSHDATA2 + 2 bytes little endian length
+        let length = littleEndianToDecimal(chunk.slice(2, 6)) * 2;
+        data += chunk.slice(6, length + 6);
+    } else if (chunk.startsWith('4c')) { // OP_PUSHDATA1 + 1 byte length
+        let length = hexToDecimal(chunk.slice(2, 4)) * 2;
+        data += chunk.slice(4, length + 4);
+    } else { // Pushdata Bytelengh 1-75
+        let length = hexToDecimal(chunk.slice(0, 2)) * 2;
+        data += chunk.slice(2, length + 2);
+    }
+    return data;
+}
 
 
 export { decodeP2SHDATA };
