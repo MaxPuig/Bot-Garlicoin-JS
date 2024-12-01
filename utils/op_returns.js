@@ -77,8 +77,8 @@ async function sendNotif(ops, client) {
                 ansi = true;
                 let ansi2png = new ANSI();
                 ansi2png.fromFile(p2shdata_info.file_location);
-                fs.writeFileSync("./data/ansi2png.png", ansi2png.toPNG());
-                msg_send.files.push({ attachment: "./data/ansi2png.png" });
+                fs.writeFileSync(`./data/${p2shdata_info.title.filename}.png`, ansi2png.toPNG());
+                msg_send.files.push({ attachment: `./data/${p2shdata_info.title.filename}.png` });
             }
             msg_send.content += '```' + JSON.stringify(p2shdata_info.title, null, 2) + '```';
         }
@@ -97,7 +97,7 @@ async function sendNotif(ops, client) {
             console.log('file deleted successfully');
         });
         if (ansi) {
-            fs.unlink("./data/ansi2png.png", (err) => {
+            fs.unlink(`./data/${p2shdata_info.title.filename}.png`, (err) => {
                 if (err) throw err;
                 console.log('ansi2png file deleted successfully');
             });
