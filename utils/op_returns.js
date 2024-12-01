@@ -3,6 +3,7 @@ dotenv.config();
 import { getDatabase, setDatabase } from './database.js';
 import { decodeP2SHDATA } from './p2shdata.js';
 import RpcClient from 'garlicoind-rpc';
+import ANSI from 'ansi-graphics';
 import fs from 'fs';
 const config = {
     protocol: 'http',
@@ -63,6 +64,7 @@ function showNewTransactions(client) {
 async function sendNotif(ops, client) {
     let msg_send = { content: '**New OP_RETURN:**\n```', files: [] };
     let p2shdata = false;
+    let ansi = false;
     let p2shdata_info;
     for (const tx of ops) msg_send.content += `HEX: ${tx[0]}\nASCII: ${tx[1]}\nTXID: ${tx[2]}\n` + '```';
     try {
@@ -70,6 +72,14 @@ async function sendNotif(ops, client) {
             p2shdata = true;
             p2shdata_info = await decodeP2SHDATA(ops[0][2]);
             msg_send.files.push({ attachment: p2shdata_info.file_location });
+            // chek if p2shdata_info.file_location ends with .ans
+            if (p2shdata_info.title.filetype.toLowerCase() == "ans") {
+                ansi = true;
+                let ansi2png = new ANSI();
+                ansi2png.fromFile(p2shdata_info.file_location);
+                fs.writeFileSync("./data/ansi2png.png", ansi2png.toPNG());
+                msg_send.files.push({ attachment: "./data/ansi2png.png" });
+            }
             msg_send.content += '```' + JSON.stringify(p2shdata_info.title, null, 2) + '```';
         }
     } catch (error) { console.log(error) } // In case the file can't be decoded
@@ -86,6 +96,12 @@ async function sendNotif(ops, client) {
             if (err) throw err;
             console.log('file deleted successfully');
         });
+        if (ansi) {
+            fs.unlink("./data/ansi2png.png", (err) => {
+                if (err) throw err;
+                console.log('ansi2png file deleted successfully');
+            });
+        }
     }
 }
 

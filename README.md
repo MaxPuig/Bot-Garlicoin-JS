@@ -25,6 +25,7 @@ Discord bot that sends info about garlicoin's price, user's wallets and freshgrl
     ```
 - clone repository: `git clone https://github.com/MaxPuig/Bot-Garlicoin-JS.git`
 - Download needed packages: `npm install`
+  - Note: Currently the package `ansi-graphics` needs some fixes. Go to `/node_modules/ansi-graphics/ansi.js` and modify the 3 instances of `new Canvas(` to `new Canvas.Canvas(`
 - create ".env" file like follows:
   ```
   # Discord Token
