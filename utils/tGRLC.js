@@ -28,7 +28,7 @@ async function send_tx(password, receiver, amount, op_return, change_address) {
     await send(transaction.tx).then(success => output = success).catch(err => output = err);
     if (output.error) return output.error.message;
     if (output.result) return `You sent ${amount} GRLC🧄 to ${receiver}\nYou can check the transaction at https://explorer.freshgrlc.net/grlc/transactions/${output.result}`;
-    else return 'Something went wrong with the RPC connection.\nBot\'s fault or it could also be because you have balance in multiple address types.\n`' + output.toString() + '`';
+    else return 'Something went wrong with the RPC connection.\nBot\'s fault or it could also be because you have balance in multiple address types.\n`' + JSON.stringify(output) + '`';
 }
 
 
